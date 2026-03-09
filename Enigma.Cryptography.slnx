@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ConsoleApp1/ConsoleApp1.csproj" />
+    <Project Path="src/Enigma.Cryptography/Enigma.Cryptography.csproj" />
+    <Project Path="src/UnitTests/UnitTests.csproj" />
+  </Folder>
+</Solution>

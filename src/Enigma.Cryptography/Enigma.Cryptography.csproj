@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <LangVersion>14</LangVersion>
+    <Authors>Josué Clément</Authors>
+    <Copyright>Copyright © 2026 Josué Clément</Copyright>
+    <PackageId>Enigma.Cryptography</PackageId>
+    <Title>Enigma.Cryptography — .NET Cryptography Library</Title>
+    <Version>4.1.0</Version>
+    <Description>A comprehensive .NET cryptography library built on BouncyCastle.Cryptography, providing block ciphers (AES, DES, Blowfish, ...), stream ciphers (ChaCha20, Salsa20), RSA public-key cryptography, post-quantum cryptography (ML-DSA, ML-KEM), hashing (SHA-2, SHA-3), key derivation (PBKDF2, Argon2), padding schemes, and data encoding utilities.</Description>
+    <PackageTags>enigma cryptography bouncycastle aes chacha20 salsa20 rsa pqc ml-dsa ml-kem sha hash pbkdf2 argon2 encryption signing dotnet open-source</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <RepositoryUrl>https://github.com/josueclement/Enigma.Cryptography</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\LICENSE.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
+    <PackageReference Include="System.Buffers" Version="4.6.1" />
+  </ItemGroup>
+
+</Project>
