@@ -2,7 +2,18 @@
   "permissions": {
     "allow": [
       "Bash(grep:*)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(tree -L 4 /home/jo/Dev/Enigma.Cryptography -I 'bin|obj' 2>/dev/null || find /home/jo/Dev/Enigma.Cryptography -not -path '*/bin/*' -not -path '*/obj/*' -type f | head -100)",
+      "Bash(ls -la /home/jo/Dev/Enigma.Cryptography/src/Enigma.Cryptography/Extensions/*.cs | wc -l)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet test:*)",
+      "Bash(which dotnet:*)",
+      "Bash(DOTNET_ROOT=/home/jo/.dotnet dotnet test src/UnitTests/UnitTests.csproj 2>&1)",
+      "Bash(DOTNET_ROOT=/home/jo/.dotnet dotnet test src/UnitTests/UnitTests.csproj --logger \"console;verbosity=detailed\" 2>&1 | grep -E \"\\(FAIL|Failed\\)\" | head -30)",
+      "Bash(iconv -f UTF-16LE -t UTF-8 /home/jo/Dev/Enigma.Cryptography/src/UnitTests/bin/Debug/net10.0/TestResults/UnitTests_net10.0_x64.log 2>/dev/null | grep -E \"failed\" 2>&1)",
+      "Bash(iconv -f UTF-16LE -t UTF-8 /home/jo/Dev/Enigma.Cryptography/src/UnitTests/bin/Debug/net10.0/TestResults/UnitTests_net10.0_x64.log 2>/dev/null | grep -A 10 \"BlockCipher_ReportsProgress\" 2>&1)",
+      "Bash(dotnet pack:*)",
+      "Bash(ls -la src/Enigma.Cryptography/bin/Release/*.nupkg 2>&1)"
     ]
   }
 }

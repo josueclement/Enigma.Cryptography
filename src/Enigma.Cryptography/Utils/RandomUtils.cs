@@ -1,3 +1,4 @@
+using System;
 using Org.BouncyCastle.Security;
 
 namespace Enigma.Cryptography.Utils;
@@ -7,6 +8,11 @@ namespace Enigma.Cryptography.Utils;
 /// </summary>
 public static class RandomUtils
 {
+    [ThreadStatic]
+    private static SecureRandom? _secureRandom;
+
+    private static SecureRandom GetSecureRandom() => _secureRandom ??= new SecureRandom();
+
     /// <summary>
     /// Generate random bytes
     /// </summary>
@@ -14,7 +20,9 @@ public static class RandomUtils
     /// <returns>Random bytes</returns>
     public static byte[] GenerateRandomBytes(int size)
     {
-        var sr = new SecureRandom();
+        if (size <= 0) throw new ArgumentException("Size must be greater than zero.", nameof(size));
+
+        var sr = GetSecureRandom();
         var bytes = new byte[size];
         sr.NextBytes(bytes);
         return bytes;

@@ -55,8 +55,12 @@ public class BlockCipherService : IBlockCipherService
         IProgress<int>? progress = null,
         CancellationToken cancellationToken = default)
     {
+        if (input is null) throw new ArgumentNullException(nameof(input));
+        if (output is null) throw new ArgumentNullException(nameof(output));
+        if (cipherParameters is null) throw new ArgumentNullException(nameof(cipherParameters));
+
         cancellationToken.ThrowIfCancellationRequested();
-        
+
         // Create and initialize the cipher
         var cipher = _cipherFactory();
         cipher.Init(forEncryption: true, cipherParameters);
@@ -101,8 +105,12 @@ public class BlockCipherService : IBlockCipherService
         IProgress<int>? progress = null,
         CancellationToken cancellationToken = default)
     {
+        if (input is null) throw new ArgumentNullException(nameof(input));
+        if (output is null) throw new ArgumentNullException(nameof(output));
+        if (cipherParameters is null) throw new ArgumentNullException(nameof(cipherParameters));
+
         cancellationToken.ThrowIfCancellationRequested();
-        
+
         // Create and initialize the cipher
         var cipher = _cipherFactory();
         cipher.Init(forEncryption: false, cipherParameters);

@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Enigma.Cryptography.Extensions;
@@ -8,6 +8,8 @@ namespace Enigma.Cryptography.Extensions;
 /// </summary>
 public static class StreamExtensionsTagLengthValue
 {
+    private const int DefaultMaxLength = 10 * 1024 * 1024; // 10 MB
+
     /// <summary>
     /// Stream extensions
     /// </summary>
@@ -24,7 +26,7 @@ public static class StreamExtensionsTagLengthValue
             stream.WriteUShort(tag);
             stream.WriteLengthValue(value);
         }
-    
+
         /// <summary>
         /// Asynchronously write Tag-Length-Value
         /// </summary>
@@ -39,22 +41,24 @@ public static class StreamExtensionsTagLengthValue
         /// <summary>
         /// Read Tag-Length-Value
         /// </summary>
+        /// <param name="maxLength">Maximum allowed length in bytes (default 10 MB)</param>
         /// <returns>(Tag, Value)</returns>
-        public (ushort tag, byte[] value) ReadTagLengthValue()
+        public (ushort tag, byte[] value) ReadTagLengthValue(int maxLength = DefaultMaxLength)
         {
             var tag = stream.ReadUShort();
-            var value = stream.ReadLengthValue();
+            var value = stream.ReadLengthValue(maxLength);
             return (tag, value);
         }
 
         /// <summary>
         /// Asynchronously read Tag-Length-Value
         /// </summary>
+        /// <param name="maxLength">Maximum allowed length in bytes (default 10 MB)</param>
         /// <returns>(Tag, Value)</returns>
-        public async Task<(ushort tag, byte[] value)> ReadTagLengthValueAsync()
+        public async Task<(ushort tag, byte[] value)> ReadTagLengthValueAsync(int maxLength = DefaultMaxLength)
         {
             var tag = await stream.ReadUShortAsync().ConfigureAwait(false);
-            var value = await stream.ReadLengthValueAsync().ConfigureAwait(false);
+            var value = await stream.ReadLengthValueAsync(maxLength).ConfigureAwait(false);
             return (tag, value);
         }
     }

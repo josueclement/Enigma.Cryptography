@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Enigma.Cryptography.Extensions;
@@ -36,8 +36,7 @@ public static class StreamExtensionsBytes
         public byte ReadByte()
         {
             var buffer = new byte[sizeof(byte)];
-            if (stream.Read(buffer, 0, sizeof(byte)) != sizeof(byte))
-                throw new IOException("Incorrect number of bytes read");
+            StreamReadHelpers.ReadExact(stream, buffer, 0, sizeof(byte));
             return buffer[0];
         }
 
@@ -49,8 +48,7 @@ public static class StreamExtensionsBytes
         public async Task<byte> ReadByteAsync()
         {
             var buffer = new byte[sizeof(byte)];
-            if (await stream.ReadAsync(buffer, 0, sizeof(byte)).ConfigureAwait(false) != sizeof(byte))
-                throw new IOException("Incorrect number of bytes read");
+            await StreamReadHelpers.ReadExactAsync(stream, buffer, 0, sizeof(byte)).ConfigureAwait(false);
             return buffer[0];
         }
 
@@ -77,8 +75,7 @@ public static class StreamExtensionsBytes
         public byte[] ReadBytes(int count)
         {
             var buffer = new byte[count];
-            if (stream.Read(buffer, 0, count) != count)
-                throw new IOException("Incorrect number of bytes read");
+            StreamReadHelpers.ReadExact(stream, buffer, 0, count);
             return buffer;
         }
 
@@ -91,8 +88,7 @@ public static class StreamExtensionsBytes
         public async Task<byte[]> ReadBytesAsync(int count)
         {
             var buffer = new byte[count];
-            if (await stream.ReadAsync(buffer, 0, count).ConfigureAwait(false) != count)
-                throw new IOException("Incorrect number of bytes read");
+            await StreamReadHelpers.ReadExactAsync(stream, buffer, 0, count).ConfigureAwait(false);
             return buffer;
         }
     }

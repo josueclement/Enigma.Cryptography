@@ -5,20 +5,14 @@ namespace Enigma.Cryptography.Padding;
 
 /// <summary>
 /// Provides padding and unpadding functionality for block cipher operations.
-/// This service uses BouncyCastle's padding mechanisms to ensure data blocks
-/// are properly sized for encryption and decryption operations.
 /// </summary>
-/// <remarks>
-/// The service is initialized with a factory function that creates padding instances.
-/// It supports padding data to match block size requirements and removing padding
-/// from previously padded data.
-/// </remarks>
 /// <param name="paddingFactory">Factory function that creates IBlockCipherPadding instances</param>
 public class PaddingService(Func<IBlockCipherPadding> paddingFactory) : IPaddingService
 {
     /// <inheritdoc />
     public byte[] Pad(byte[] data, int blockSize)
     {
+        if (data is null) throw new ArgumentNullException(nameof(data));
         if (blockSize is < 1 or > byte.MaxValue)
             throw new ArgumentException($"Invalid block size {blockSize}", nameof(blockSize));
 
@@ -35,6 +29,7 @@ public class PaddingService(Func<IBlockCipherPadding> paddingFactory) : IPadding
     /// <inheritdoc />
     public byte[] Unpad(byte[] data, int blockSize)
     {
+        if (data is null) throw new ArgumentNullException(nameof(data));
         if (blockSize is < 1 or > byte.MaxValue)
             throw new ArgumentException($"Invalid block size {blockSize}", nameof(blockSize));
         if (data.Length % blockSize != 0 || data.Length < blockSize)

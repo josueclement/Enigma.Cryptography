@@ -34,8 +34,10 @@ public class HashService : IHashService
         IProgress<int>? progress = null,
         CancellationToken cancellationToken = default)
     {
+        if (input is null) throw new ArgumentNullException(nameof(input));
+
         cancellationToken.ThrowIfCancellationRequested();
-        
+
         // Create and initialize the digest
         var digest = _digestFactory();
         
