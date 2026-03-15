@@ -43,8 +43,14 @@ public class Argon2Service : IArgon2Service
 
         var derivedKey = new byte[size];
 
-        argon2Gen.GenerateBytes(passwordBytes, derivedKey, 0, derivedKey.Length);
-
-        return derivedKey;
+        try
+        {
+            argon2Gen.GenerateBytes(passwordBytes, derivedKey, 0, derivedKey.Length);
+            return derivedKey;
+        }
+        finally
+        {
+            Array.Clear(passwordBytes, 0, passwordBytes.Length);
+        }
     }
 }

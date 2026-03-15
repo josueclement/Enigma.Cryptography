@@ -11,7 +11,7 @@ public interface IPbkdf2Service
     /// <param name="size">The desired key size in bytes.</param>
     /// <param name="password">The password from which to derive the key.</param>
     /// <param name="salt">The salt value to use in the derivation.</param>
-    /// <param name="iterations">The number of iterations to perform. Default is 10,000.</param>
+    /// <param name="iterations">The number of iterations to perform. Default is 600,000 (OWASP 2023 recommendation).</param>
     /// <returns>The derived key as a byte array of the requested size.</returns>
-    byte[] GenerateKey(int size, string password, byte[] salt, int iterations = 10_000);
+    byte[] GenerateKey(int size, string password, byte[] salt, int iterations = 600_000);
 }

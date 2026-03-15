@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Enigma.Cryptography.Extensions;
@@ -30,11 +31,12 @@ public static class StreamExtensionsBool
         /// Asynchronously write bool value
         /// </summary>
         /// <param name="value">Value</param>
-        public async Task WriteBoolAsync(bool value)
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task WriteBoolAsync(bool value, CancellationToken cancellationToken = default)
         {
             var data = BitConverter.GetBytes(value);
             if (!BitConverter.IsLittleEndian) Array.Reverse(data);
-            await stream.WriteAsync(data, 0, data.Length).ConfigureAwait(false);
+            await stream.WriteAsync(data, 0, data.Length, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -53,12 +55,13 @@ public static class StreamExtensionsBool
         /// <summary>
         /// Asynchronously read bool value
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Bool value</returns>
         /// <exception cref="IOException"></exception>
-        public async Task<bool> ReadBoolAsync()
+        public async Task<bool> ReadBoolAsync(CancellationToken cancellationToken = default)
         {
             var buffer = new byte[sizeof(bool)];
-            await StreamReadHelpers.ReadExactAsync(stream, buffer, 0, sizeof(bool)).ConfigureAwait(false);
+            await StreamReadHelpers.ReadExactAsync(stream, buffer, 0, sizeof(bool), cancellationToken).ConfigureAwait(false);
             if (!BitConverter.IsLittleEndian) Array.Reverse(buffer);
             return BitConverter.ToBoolean(buffer, 0);
         }

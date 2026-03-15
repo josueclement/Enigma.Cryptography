@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Enigma.Cryptography.Extensions;
@@ -30,12 +31,13 @@ public static class StreamExtensionsInt16
         /// Asynchronously write Int16 value
         /// </summary>
         /// <param name="value">Value</param>
-        public async Task WriteShortAsync(short value)
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task WriteShortAsync(short value, CancellationToken cancellationToken = default)
         {
             var data = new byte[2];
             data[0] = (byte)value;
             data[1] = (byte)(value >> 8);
-            await stream.WriteAsync(data, 0, 2).ConfigureAwait(false);
+            await stream.WriteAsync(data, 0, 2, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -53,12 +55,13 @@ public static class StreamExtensionsInt16
         /// <summary>
         /// Asynchronously read Int16 value
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Int16 value</returns>
         /// <exception cref="IOException"></exception>
-        public async Task<short> ReadShortAsync()
+        public async Task<short> ReadShortAsync(CancellationToken cancellationToken = default)
         {
             var buffer = new byte[2];
-            await StreamReadHelpers.ReadExactAsync(stream, buffer, 0, 2).ConfigureAwait(false);
+            await StreamReadHelpers.ReadExactAsync(stream, buffer, 0, 2, cancellationToken).ConfigureAwait(false);
             return (short)(buffer[0] | (buffer[1] << 8));
         }
 
@@ -78,12 +81,13 @@ public static class StreamExtensionsInt16
         /// Asynchronously write unsigned Int16 value
         /// </summary>
         /// <param name="value">Value</param>
-        public async Task WriteUShortAsync(ushort value)
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task WriteUShortAsync(ushort value, CancellationToken cancellationToken = default)
         {
             var data = new byte[2];
             data[0] = (byte)value;
             data[1] = (byte)(value >> 8);
-            await stream.WriteAsync(data, 0, 2).ConfigureAwait(false);
+            await stream.WriteAsync(data, 0, 2, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -101,12 +105,13 @@ public static class StreamExtensionsInt16
         /// <summary>
         /// Asynchronously read unsigned Int16 value
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Unsigned Int16 value</returns>
         /// <exception cref="IOException"></exception>
-        public async Task<ushort> ReadUShortAsync()
+        public async Task<ushort> ReadUShortAsync(CancellationToken cancellationToken = default)
         {
             var buffer = new byte[2];
-            await StreamReadHelpers.ReadExactAsync(stream, buffer, 0, 2).ConfigureAwait(false);
+            await StreamReadHelpers.ReadExactAsync(stream, buffer, 0, 2, cancellationToken).ConfigureAwait(false);
             return (ushort)(buffer[0] | (buffer[1] << 8));
         }
     }

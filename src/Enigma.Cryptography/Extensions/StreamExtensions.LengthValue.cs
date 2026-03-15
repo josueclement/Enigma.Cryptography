@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Enigma.Cryptography.Extensions;
@@ -31,10 +32,11 @@ public static class StreamExtensionsLengthValue
         /// Asynchronously write value length and value
         /// </summary>
         /// <param name="value">Value</param>
-        public async Task WriteLengthValueAsync(byte[] value)
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task WriteLengthValueAsync(byte[] value, CancellationToken cancellationToken = default)
         {
-            await stream.WriteIntAsync(value.Length).ConfigureAwait(false);
-            await stream.WriteBytesAsync(value).ConfigureAwait(false);
+            await stream.WriteIntAsync(value.Length, cancellationToken).ConfigureAwait(false);
+            await stream.WriteBytesAsync(value, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -55,14 +57,15 @@ public static class StreamExtensionsLengthValue
         /// Asynchronously read value length and value
         /// </summary>
         /// <param name="maxLength">Maximum allowed length in bytes (default 10 MB)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Value</returns>
         /// <exception cref="InvalidOperationException">Thrown when length is negative or exceeds maxLength</exception>
-        public async Task<byte[]> ReadLengthValueAsync(int maxLength = DefaultMaxLength)
+        public async Task<byte[]> ReadLengthValueAsync(int maxLength = DefaultMaxLength, CancellationToken cancellationToken = default)
         {
-            var length = await stream.ReadIntAsync().ConfigureAwait(false);
+            var length = await stream.ReadIntAsync(cancellationToken).ConfigureAwait(false);
             if (length < 0 || length > maxLength)
                 throw new InvalidOperationException($"Length value {length} is out of allowed range [0, {maxLength}].");
-            return await stream.ReadBytesAsync(length).ConfigureAwait(false);
+            return await stream.ReadBytesAsync(length, cancellationToken).ConfigureAwait(false);
         }
     }
 }

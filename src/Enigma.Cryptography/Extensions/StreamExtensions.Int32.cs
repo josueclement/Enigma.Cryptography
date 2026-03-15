@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Enigma.Cryptography.Extensions;
@@ -32,14 +33,15 @@ public static class StreamExtensionsInt32
         /// Asynchronously write Int32 value
         /// </summary>
         /// <param name="value">Value</param>
-        public async Task WriteIntAsync(int value)
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task WriteIntAsync(int value, CancellationToken cancellationToken = default)
         {
             var data = new byte[4];
             data[0] = (byte)value;
             data[1] = (byte)(value >> 8);
             data[2] = (byte)(value >> 16);
             data[3] = (byte)(value >> 24);
-            await stream.WriteAsync(data, 0, 4).ConfigureAwait(false);
+            await stream.WriteAsync(data, 0, 4, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -57,12 +59,13 @@ public static class StreamExtensionsInt32
         /// <summary>
         /// Asynchronously read Int32 value
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Int32 value</returns>
         /// <exception cref="IOException"></exception>
-        public async Task<int> ReadIntAsync()
+        public async Task<int> ReadIntAsync(CancellationToken cancellationToken = default)
         {
             var buffer = new byte[4];
-            await StreamReadHelpers.ReadExactAsync(stream, buffer, 0, 4).ConfigureAwait(false);
+            await StreamReadHelpers.ReadExactAsync(stream, buffer, 0, 4, cancellationToken).ConfigureAwait(false);
             return buffer[0] | (buffer[1] << 8) | (buffer[2] << 16) | (buffer[3] << 24);
         }
 
@@ -84,14 +87,15 @@ public static class StreamExtensionsInt32
         /// Asynchronously write unsigned Int32 value
         /// </summary>
         /// <param name="value">Value</param>
-        public async Task WriteUIntAsync(uint value)
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task WriteUIntAsync(uint value, CancellationToken cancellationToken = default)
         {
             var data = new byte[4];
             data[0] = (byte)value;
             data[1] = (byte)(value >> 8);
             data[2] = (byte)(value >> 16);
             data[3] = (byte)(value >> 24);
-            await stream.WriteAsync(data, 0, 4).ConfigureAwait(false);
+            await stream.WriteAsync(data, 0, 4, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -109,12 +113,13 @@ public static class StreamExtensionsInt32
         /// <summary>
         /// Asynchronously read unsigned Int32 value
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Unsigned Int32 value</returns>
         /// <exception cref="IOException"></exception>
-        public async Task<uint> ReadUIntAsync()
+        public async Task<uint> ReadUIntAsync(CancellationToken cancellationToken = default)
         {
             var buffer = new byte[4];
-            await StreamReadHelpers.ReadExactAsync(stream, buffer, 0, 4).ConfigureAwait(false);
+            await StreamReadHelpers.ReadExactAsync(stream, buffer, 0, 4, cancellationToken).ConfigureAwait(false);
             return (uint)(buffer[0] | (buffer[1] << 8) | (buffer[2] << 16) | (buffer[3] << 24));
         }
     }
