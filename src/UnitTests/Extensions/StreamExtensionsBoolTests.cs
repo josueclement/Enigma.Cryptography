@@ -1,4 +1,4 @@
-﻿using Enigma.Cryptography.Extensions;
+using Enigma.Cryptography.Extensions;
 using System.IO;
 using System.Threading.Tasks;
 using Xunit;
@@ -13,9 +13,9 @@ public class StreamExtensionsBoolTests
         using var output = new MemoryStream();
         output.WriteBool(false);
         output.WriteBool(true);
-        
+
         using var input = new MemoryStream(output.ToArray());
-        
+
         var result = input.ReadBool();
         Assert.False(result);
         result = input.ReadBool();
@@ -26,14 +26,14 @@ public class StreamExtensionsBoolTests
     public async Task ReadWriteBoolAsync()
     {
         using var output = new MemoryStream();
-        await output.WriteBoolAsync(false);
-        await output.WriteBoolAsync(true);
-        
+        await output.WriteBoolAsync(false, TestContext.Current.CancellationToken);
+        await output.WriteBoolAsync(true, TestContext.Current.CancellationToken);
+
         using var input = new MemoryStream(output.ToArray());
-        
-        var result = await input.ReadBoolAsync();
-        Assert.False(result); 
-        result = await input.ReadBoolAsync();
+
+        var result = await input.ReadBoolAsync(TestContext.Current.CancellationToken);
+        Assert.False(result);
+        result = await input.ReadBoolAsync(TestContext.Current.CancellationToken);
         Assert.True(result);
     }
 }

@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Enigma.Cryptography.Extensions;
@@ -32,10 +33,11 @@ public static class StreamExtensionsTagLengthValue
         /// </summary>
         /// <param name="tag">Tag</param>
         /// <param name="value">Value</param>
-        public async Task WriteTagLengthValueAsync(ushort tag, byte[] value)
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task WriteTagLengthValueAsync(ushort tag, byte[] value, CancellationToken cancellationToken = default)
         {
-            await stream.WriteUShortAsync(tag).ConfigureAwait(false);
-            await stream.WriteLengthValueAsync(value).ConfigureAwait(false);
+            await stream.WriteUShortAsync(tag, cancellationToken).ConfigureAwait(false);
+            await stream.WriteLengthValueAsync(value, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -54,11 +56,12 @@ public static class StreamExtensionsTagLengthValue
         /// Asynchronously read Tag-Length-Value
         /// </summary>
         /// <param name="maxLength">Maximum allowed length in bytes (default 10 MB)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>(Tag, Value)</returns>
-        public async Task<(ushort tag, byte[] value)> ReadTagLengthValueAsync(int maxLength = DefaultMaxLength)
+        public async Task<(ushort tag, byte[] value)> ReadTagLengthValueAsync(int maxLength = DefaultMaxLength, CancellationToken cancellationToken = default)
         {
-            var tag = await stream.ReadUShortAsync().ConfigureAwait(false);
-            var value = await stream.ReadLengthValueAsync(maxLength).ConfigureAwait(false);
+            var tag = await stream.ReadUShortAsync(cancellationToken).ConfigureAwait(false);
+            var value = await stream.ReadLengthValueAsync(maxLength, cancellationToken).ConfigureAwait(false);
             return (tag, value);
         }
     }

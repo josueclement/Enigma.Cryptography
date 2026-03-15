@@ -16,7 +16,11 @@
       "Bash(ls -la src/Enigma.Cryptography/bin/Release/*.nupkg 2>&1)",
       "Bash(git -C /home/jo/Dev/Enigma.Cryptography status)",
       "Bash(git -C /home/jo/Dev/Enigma.Cryptography diff)",
-      "Bash(git -C /home/jo/Dev/Enigma.Cryptography log --oneline -5)"
+      "Bash(git -C /home/jo/Dev/Enigma.Cryptography log --oneline -5)",
+      "Bash(dotnet --version)",
+      "Bash(ls /home/jo/Dev/Enigma.Cryptography/*.sln 2>/dev/null; ls /home/jo/Dev/Enigma.Cryptography/src/*.sln 2>/dev/null; find /home/jo/Dev/Enigma.Cryptography -maxdepth 2 -name \"*.sln\" 2>/dev/null)",
+      "Bash(DOTNET_ROOT=\"$HOME/.dotnet\" dotnet test src/UnitTests/UnitTests.csproj 2>&1)",
+      "Bash(ls -la /home/jo/Dev/Enigma.Cryptography/src/Enigma.Cryptography/bin/Release/*.nupkg 2>&1)"
     ]
   }
 }

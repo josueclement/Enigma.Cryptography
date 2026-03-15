@@ -1,4 +1,4 @@
-﻿using Enigma.Cryptography.Extensions;
+using Enigma.Cryptography.Extensions;
 using System.IO;
 using System.Threading.Tasks;
 using Xunit;
@@ -12,20 +12,20 @@ public class StreamExtensionsLengthValueTests
     {
         using var output = new MemoryStream();
         output.WriteLengthValue([0, 1, 254, 255]);
-        
+
         using var input = new MemoryStream(output.ToArray());
         var result = input.ReadLengthValue();
         Assert.Equal([0, 1, 254, 255], result);
     }
-    
+
     [Fact]
     public async Task ReadWriteLengthValueAsync()
     {
         using var output = new MemoryStream();
-        await output.WriteLengthValueAsync([0, 1, 254, 255]);
-        
+        await output.WriteLengthValueAsync([0, 1, 254, 255], TestContext.Current.CancellationToken);
+
         using var input = new MemoryStream(output.ToArray());
-        var result = await input.ReadLengthValueAsync();
+        var result = await input.ReadLengthValueAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.Equal([0, 1, 254, 255], result);
     }
 }

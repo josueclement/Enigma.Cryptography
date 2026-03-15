@@ -1,4 +1,4 @@
-﻿using Enigma.Cryptography.Extensions;
+using Enigma.Cryptography.Extensions;
 using System.IO;
 using System.Threading.Tasks;
 using Xunit;
@@ -10,12 +10,12 @@ public class StreamExtensionsInt64Tests
     [Fact]
     public void ReadWriteInt64()
     {
-        using var output = new MemoryStream(); 
+        using var output = new MemoryStream();
         output.WriteLong(long.MaxValue);
         output.WriteLong(long.MinValue);
-        
+
         using var input = new MemoryStream(output.ToArray());
-        
+
         var result = input.ReadLong();
         Assert.Equal(long.MaxValue, result);
         result = input.ReadLong();
@@ -26,26 +26,26 @@ public class StreamExtensionsInt64Tests
     public async Task ReadWriteInt64Async()
     {
         using var output = new MemoryStream();
-        await output.WriteLongAsync(long.MaxValue);
-        await output.WriteLongAsync(long.MinValue);
-        
+        await output.WriteLongAsync(long.MaxValue, TestContext.Current.CancellationToken);
+        await output.WriteLongAsync(long.MinValue, TestContext.Current.CancellationToken);
+
         using var input = new MemoryStream(output.ToArray());
-        
-        var result = await input.ReadLongAsync();
+
+        var result = await input.ReadLongAsync(TestContext.Current.CancellationToken);
         Assert.Equal(long.MaxValue, result);
-        result = await input.ReadLongAsync();
+        result = await input.ReadLongAsync(TestContext.Current.CancellationToken);
         Assert.Equal(long.MinValue, result);
     }
-    
+
     [Fact]
     public void ReadWriteUInt64()
     {
         using var output = new MemoryStream();
         output.WriteULong(ulong.MaxValue);
         output.WriteULong(ulong.MinValue);
-        
+
         using var input = new MemoryStream(output.ToArray());
-        
+
         var result = input.ReadULong();
         Assert.Equal(ulong.MaxValue, result);
         result = input.ReadULong();
@@ -56,14 +56,14 @@ public class StreamExtensionsInt64Tests
     public async Task ReadWriteUInt64Async()
     {
         using var output = new MemoryStream();
-        await output.WriteULongAsync(ulong.MaxValue);
-        await output.WriteULongAsync(ulong.MinValue);
-        
+        await output.WriteULongAsync(ulong.MaxValue, TestContext.Current.CancellationToken);
+        await output.WriteULongAsync(ulong.MinValue, TestContext.Current.CancellationToken);
+
         using var input = new MemoryStream(output.ToArray());
-        
-        var result = await input.ReadULongAsync();
+
+        var result = await input.ReadULongAsync(TestContext.Current.CancellationToken);
         Assert.Equal(ulong.MaxValue, result);
-        result = await input.ReadULongAsync();
+        result = await input.ReadULongAsync(TestContext.Current.CancellationToken);
         Assert.Equal(ulong.MinValue, result);
     }
 }

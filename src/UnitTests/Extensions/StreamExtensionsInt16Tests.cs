@@ -1,4 +1,4 @@
-﻿using Enigma.Cryptography.Extensions;
+using Enigma.Cryptography.Extensions;
 using System.IO;
 using System.Threading.Tasks;
 using Xunit;
@@ -10,12 +10,12 @@ public class StreamExtensionsInt16Tests
     [Fact]
     public void ReadWriteInt16()
     {
-        using var output = new MemoryStream(); 
+        using var output = new MemoryStream();
         output.WriteShort(short.MaxValue);
         output.WriteShort(short.MinValue);
-        
+
         using var input = new MemoryStream(output.ToArray());
-        
+
         var result = input.ReadShort();
         Assert.Equal(short.MaxValue, result);
         result = input.ReadShort();
@@ -26,26 +26,26 @@ public class StreamExtensionsInt16Tests
     public async Task ReadWriteInt16Async()
     {
         using var output = new MemoryStream();
-        await output.WriteShortAsync(short.MaxValue);
-        await output.WriteShortAsync(short.MinValue);
-        
+        await output.WriteShortAsync(short.MaxValue, TestContext.Current.CancellationToken);
+        await output.WriteShortAsync(short.MinValue, TestContext.Current.CancellationToken);
+
         using var input = new MemoryStream(output.ToArray());
-        
-        var result = await input.ReadShortAsync();
+
+        var result = await input.ReadShortAsync(TestContext.Current.CancellationToken);
         Assert.Equal(short.MaxValue, result);
-        result = await input.ReadShortAsync();
+        result = await input.ReadShortAsync(TestContext.Current.CancellationToken);
         Assert.Equal(short.MinValue, result);
     }
-    
+
     [Fact]
     public void ReadWriteUInt16()
     {
         using var output = new MemoryStream();
         output.WriteUShort(ushort.MaxValue);
         output.WriteUShort(ushort.MinValue);
-        
+
         using var input = new MemoryStream(output.ToArray());
-        
+
         var result = input.ReadUShort();
         Assert.Equal(ushort.MaxValue, result);
         result = input.ReadUShort();
@@ -56,14 +56,14 @@ public class StreamExtensionsInt16Tests
     public async Task ReadWriteUInt16Async()
     {
         using var output = new MemoryStream();
-        await output.WriteUShortAsync(ushort.MaxValue);
-        await output.WriteUShortAsync(ushort.MinValue);
-        
+        await output.WriteUShortAsync(ushort.MaxValue, TestContext.Current.CancellationToken);
+        await output.WriteUShortAsync(ushort.MinValue, TestContext.Current.CancellationToken);
+
         using var input = new MemoryStream(output.ToArray());
-        
-        var result = await input.ReadUShortAsync();
+
+        var result = await input.ReadUShortAsync(TestContext.Current.CancellationToken);
         Assert.Equal(ushort.MaxValue, result);
-        result = await input.ReadUShortAsync();
+        result = await input.ReadUShortAsync(TestContext.Current.CancellationToken);
         Assert.Equal(ushort.MinValue, result);
     }
 }

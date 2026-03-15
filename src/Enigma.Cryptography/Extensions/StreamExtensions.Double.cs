@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Enigma.Cryptography.Extensions;
@@ -30,11 +31,12 @@ public static class StreamExtensionsDouble
         /// Asynchronously write double
         /// </summary>
         /// <param name="value">Value</param>
-        public async Task WriteDoubleAsync(double value)
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task WriteDoubleAsync(double value, CancellationToken cancellationToken = default)
         {
             var data = BitConverter.GetBytes(value);
             if (!BitConverter.IsLittleEndian) Array.Reverse(data);
-            await stream.WriteAsync(data, 0, data.Length).ConfigureAwait(false);
+            await stream.WriteAsync(data, 0, data.Length, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -53,12 +55,13 @@ public static class StreamExtensionsDouble
         /// <summary>
         /// Asynchronously read double value
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Double value</returns>
         /// <exception cref="IOException"></exception>
-        public async Task<double> ReadDoubleAsync()
+        public async Task<double> ReadDoubleAsync(CancellationToken cancellationToken = default)
         {
             var buffer = new byte[sizeof(double)];
-            await StreamReadHelpers.ReadExactAsync(stream, buffer, 0, sizeof(double)).ConfigureAwait(false);
+            await StreamReadHelpers.ReadExactAsync(stream, buffer, 0, sizeof(double), cancellationToken).ConfigureAwait(false);
             if (!BitConverter.IsLittleEndian) Array.Reverse(buffer);
             return BitConverter.ToDouble(buffer, 0);
         }

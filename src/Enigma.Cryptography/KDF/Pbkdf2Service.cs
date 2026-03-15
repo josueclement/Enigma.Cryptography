@@ -18,7 +18,7 @@ namespace Enigma.Cryptography.KDF;
 public class Pbkdf2Service : IPbkdf2Service
 {
     /// <inheritdoc />
-    public byte[] GenerateKey(int size, string password, byte[] salt, int iterations = 10_000)
+    public byte[] GenerateKey(int size, string password, byte[] salt, int iterations = 600_000)
     {
         if (size <= 0) throw new ArgumentException("Size must be greater than zero.", nameof(size));
         if (password is null) throw new ArgumentNullException(nameof(password));
