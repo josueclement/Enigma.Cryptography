@@ -41,6 +41,7 @@ For block ciphers there are additional internal factories:
 
 - Stream-based modules (BlockCiphers, StreamCiphers, Hash) are **async** (`Task`-based) and accept `Stream` inputs/outputs (enabling large-file processing). Byte[]-based modules (KDF, PublicKey, PQC, Padding, DataEncoding) are synchronous.
 - Async stream-based modules support `IProgress<int>` for progress reporting (reports per-chunk byte deltas, not cumulative totals) and `CancellationToken` for cancellation
+- KDF methods do not clear caller-provided input arrays; callers own input lifetime and are responsible for clearing sensitive data (e.g. password bytes) when no longer needed
 - Internal buffer pooling uses `ArrayPool<byte>.Shared` for memory efficiency
 - All crypto delegates to **BouncyCastle.Cryptography v2.6.2**; this library is purely an abstraction layer
 

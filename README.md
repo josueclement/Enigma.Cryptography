@@ -359,6 +359,9 @@ var salt = RandomUtils.GenerateRandomBytes(16);
 
 // Derive a 32-byte key from a password and salt
 var key = service.GenerateKey(32, passwordData, salt);
+
+// The caller is responsible for clearing sensitive input when done
+Array.Clear(passwordData, 0, passwordData.Length);
 ```
 
 ---

@@ -9,7 +9,7 @@ public interface IArgon2Service
     /// Generates a cryptographic key using the Argon2 password-based key derivation function.
     /// </summary>
     /// <param name="size">The size of the derived key in bytes.</param>
-    /// <param name="passwordBytes">The password bytes to derive the key from.</param>
+    /// <param name="passwordBytes">The password bytes to derive the key from. The caller is responsible for clearing this array when no longer needed.</param>
     /// <param name="salt">The cryptographic salt to use.</param>
     /// <param name="iterations">The number of iterations (time cost). Default is 10.</param>
     /// <param name="parallelism">The degree of parallelism. Default is 4.</param>

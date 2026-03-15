@@ -9,7 +9,7 @@
     <Copyright>Copyright © 2026 Josué Clément</Copyright>
     <PackageId>Enigma.Cryptography</PackageId>
     <Title>Enigma.Cryptography — .NET Cryptography Library</Title>
-    <Version>4.2.0</Version>
+    <Version>4.2.1</Version>
     <Description>A comprehensive .NET cryptography library built on BouncyCastle.Cryptography, providing block ciphers (AES, DES, Blowfish, ...), stream ciphers (ChaCha20, Salsa20), RSA public-key cryptography, post-quantum cryptography (ML-DSA, ML-KEM), hashing (SHA-2, SHA-3), key derivation (PBKDF2, Argon2), padding schemes, and data encoding utilities.</Description>
     <PackageTags>enigma cryptography bouncycastle aes chacha20 salsa20 rsa pqc ml-dsa ml-kem sha hash pbkdf2 argon2 encryption signing dotnet open-source</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
