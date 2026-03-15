@@ -2,6 +2,7 @@ using Enigma.Cryptography.BlockCiphers;
 using Enigma.Cryptography.Utils;
 using Org.BouncyCastle.Crypto.Parameters;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -13,7 +14,8 @@ public class AdditionalEngineTests
         IBlockCipherService service,
         byte[] key,
         byte[] iv,
-        byte[] plaintext)
+        byte[] plaintext,
+        CancellationToken cancellationToken)
     {
         var parameters = new ParametersWithIV(new KeyParameter(key), iv);
 
@@ -21,13 +23,13 @@ public class AdditionalEngineTests
         using (var msInput = new MemoryStream(plaintext))
         using (var msEncrypted = new MemoryStream())
         {
-            await service.EncryptAsync(msInput, msEncrypted, parameters);
+            await service.EncryptAsync(msInput, msEncrypted, parameters, cancellationToken: cancellationToken);
             encryptedBytes = msEncrypted.ToArray();
         }
 
         using var msEncInput = new MemoryStream(encryptedBytes);
         using var msDecrypted = new MemoryStream();
-        await service.DecryptAsync(msEncInput, msDecrypted, parameters);
+        await service.DecryptAsync(msEncInput, msDecrypted, parameters, cancellationToken: cancellationToken);
 
         Assert.Equal(plaintext, msDecrypted.ToArray());
     }
@@ -40,7 +42,7 @@ public class AdditionalEngineTests
         var key = RandomUtils.GenerateRandomBytes(32); // 256-bit
         var iv = RandomUtils.GenerateRandomBytes(16);  // 128-bit block
         var plaintext = RandomUtils.GenerateRandomBytes(64);
-        await RoundTrip(service, key, iv, plaintext);
+        await RoundTrip(service, key, iv, plaintext, TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -51,7 +53,7 @@ public class AdditionalEngineTests
         var key = RandomUtils.GenerateRandomBytes(32);
         var iv = RandomUtils.GenerateRandomBytes(16);
         var plaintext = RandomUtils.GenerateRandomBytes(64);
-        await RoundTrip(service, key, iv, plaintext);
+        await RoundTrip(service, key, iv, plaintext, TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -62,7 +64,7 @@ public class AdditionalEngineTests
         var key = RandomUtils.GenerateRandomBytes(32);
         var iv = RandomUtils.GenerateRandomBytes(16);
         var plaintext = RandomUtils.GenerateRandomBytes(64);
-        await RoundTrip(service, key, iv, plaintext);
+        await RoundTrip(service, key, iv, plaintext, TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -73,7 +75,7 @@ public class AdditionalEngineTests
         var key = RandomUtils.GenerateRandomBytes(16); // 128-bit
         var iv = RandomUtils.GenerateRandomBytes(8);   // 64-bit block
         var plaintext = RandomUtils.GenerateRandomBytes(64);
-        await RoundTrip(service, key, iv, plaintext);
+        await RoundTrip(service, key, iv, plaintext, TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -84,7 +86,7 @@ public class AdditionalEngineTests
         var key = RandomUtils.GenerateRandomBytes(16); // 128-bit
         var iv = RandomUtils.GenerateRandomBytes(8);   // 64-bit block
         var plaintext = RandomUtils.GenerateRandomBytes(64);
-        await RoundTrip(service, key, iv, plaintext);
+        await RoundTrip(service, key, iv, plaintext, TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -95,7 +97,7 @@ public class AdditionalEngineTests
         var key = RandomUtils.GenerateRandomBytes(16); // 128-bit
         var iv = RandomUtils.GenerateRandomBytes(16);  // 128-bit block
         var plaintext = RandomUtils.GenerateRandomBytes(64);
-        await RoundTrip(service, key, iv, plaintext);
+        await RoundTrip(service, key, iv, plaintext, TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -106,7 +108,7 @@ public class AdditionalEngineTests
         var key = RandomUtils.GenerateRandomBytes(32);
         var iv = RandomUtils.GenerateRandomBytes(16);
         var plaintext = RandomUtils.GenerateRandomBytes(64);
-        await RoundTrip(service, key, iv, plaintext);
+        await RoundTrip(service, key, iv, plaintext, TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -117,6 +119,6 @@ public class AdditionalEngineTests
         var key = RandomUtils.GenerateRandomBytes(16); // 128-bit
         var iv = RandomUtils.GenerateRandomBytes(16);  // 128-bit block
         var plaintext = RandomUtils.GenerateRandomBytes(64);
-        await RoundTrip(service, key, iv, plaintext);
+        await RoundTrip(service, key, iv, plaintext, TestContext.Current.CancellationToken);
     }
 }

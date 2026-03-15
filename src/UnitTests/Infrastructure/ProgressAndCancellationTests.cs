@@ -32,7 +32,7 @@ public class ProgressAndCancellationTests
         var reported = new List<int>();
         var progress = new SyncProgress<int>(bytes => reported.Add(bytes));
 
-        await service.HashAsync(input, progress);
+        await service.HashAsync(input, progress, cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.NotEmpty(reported);
     }
@@ -54,7 +54,7 @@ public class ProgressAndCancellationTests
         var reported = new List<int>();
         var progress = new SyncProgress<int>(bytes => reported.Add(bytes));
 
-        await service.EncryptAsync(input, output, parameters, progress);
+        await service.EncryptAsync(input, output, parameters, progress, cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.NotEmpty(reported);
     }
@@ -65,7 +65,7 @@ public class ProgressAndCancellationTests
         var service = new HashService(() => new Sha256Digest());
         using var input = new MemoryStream(new byte[] { 1, 2, 3 });
 
-        var cts = new CancellationTokenSource();
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
         cts.Cancel();
 
         await Assert.ThrowsAsync<OperationCanceledException>(() =>
@@ -85,7 +85,7 @@ public class ProgressAndCancellationTests
         using var input = new MemoryStream(new byte[] { 1, 2, 3 });
         using var output = new MemoryStream();
 
-        var cts = new CancellationTokenSource();
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
         cts.Cancel();
 
         await Assert.ThrowsAsync<OperationCanceledException>(() =>

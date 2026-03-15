@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Enigma.Cryptography.BlockCiphers;
 using Enigma.Cryptography.DataEncoding;
@@ -105,7 +106,7 @@ public class ArgumentValidationTests
     public async Task Hash_NullInput_Throws()
     {
         var service = new HashService(() => new Sha256Digest());
-        await Assert.ThrowsAsync<ArgumentNullException>(() => service.HashAsync(null!));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => service.HashAsync(null!, cancellationToken: TestContext.Current.CancellationToken));
     }
 
     // S5 - BlockCipherService
@@ -116,7 +117,7 @@ public class ArgumentValidationTests
         var service = new BlockCipherServiceFactory().CreateCbcService(engineFactory.CreateAesEngine);
         var parameters = new ParametersWithIV(new KeyParameter(new byte[32]), new byte[16]);
         await Assert.ThrowsAsync<ArgumentNullException>(() =>
-            service.EncryptAsync(null!, new MemoryStream(), parameters));
+            service.EncryptAsync(null!, new MemoryStream(), parameters, cancellationToken: TestContext.Current.CancellationToken));
     }
 
     [Fact]
@@ -126,7 +127,7 @@ public class ArgumentValidationTests
         var service = new BlockCipherServiceFactory().CreateCbcService(engineFactory.CreateAesEngine);
         var parameters = new ParametersWithIV(new KeyParameter(new byte[32]), new byte[16]);
         await Assert.ThrowsAsync<ArgumentNullException>(() =>
-            service.EncryptAsync(new MemoryStream(), null!, parameters));
+            service.EncryptAsync(new MemoryStream(), null!, parameters, cancellationToken: TestContext.Current.CancellationToken));
     }
 
     [Fact]
@@ -135,7 +136,7 @@ public class ArgumentValidationTests
         var engineFactory = new BlockCipherEngineFactory();
         var service = new BlockCipherServiceFactory().CreateCbcService(engineFactory.CreateAesEngine);
         await Assert.ThrowsAsync<ArgumentNullException>(() =>
-            service.EncryptAsync(new MemoryStream(), new MemoryStream(), null!));
+            service.EncryptAsync(new MemoryStream(), new MemoryStream(), null!, cancellationToken: TestContext.Current.CancellationToken));
     }
 
     // S5 - StreamCipherService
@@ -145,7 +146,7 @@ public class ArgumentValidationTests
         var factory = new StreamCipherServiceFactory();
         var service = factory.CreateChaCha20Service();
         await Assert.ThrowsAsync<ArgumentNullException>(() =>
-            service.EncryptAsync(new MemoryStream(), new MemoryStream(), null!, new byte[8]));
+            service.EncryptAsync(new MemoryStream(), new MemoryStream(), null!, new byte[8], cancellationToken: TestContext.Current.CancellationToken));
     }
 
     [Fact]
@@ -154,7 +155,7 @@ public class ArgumentValidationTests
         var factory = new StreamCipherServiceFactory();
         var service = factory.CreateChaCha20Service();
         await Assert.ThrowsAsync<ArgumentNullException>(() =>
-            service.EncryptAsync(new MemoryStream(), new MemoryStream(), new byte[32], null!));
+            service.EncryptAsync(new MemoryStream(), new MemoryStream(), new byte[32], null!, cancellationToken: TestContext.Current.CancellationToken));
     }
 
     // S5 - PublicKeyService
