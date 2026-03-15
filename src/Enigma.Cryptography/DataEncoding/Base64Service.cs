@@ -1,3 +1,4 @@
+using System;
 using Org.BouncyCastle.Utilities.Encoders;
 
 namespace Enigma.Cryptography.DataEncoding;
@@ -9,9 +10,15 @@ public class Base64Service : IEncodingService
 {
     /// <inheritdoc />
     public string Encode(byte[] data)
-        => Base64.ToBase64String(data);
+    {
+        if (data is null) throw new ArgumentNullException(nameof(data));
+        return Base64.ToBase64String(data);
+    }
 
     /// <inheritdoc />
     public byte[] Decode(string data)
-        => Base64.Decode(data);
+    {
+        if (data is null) throw new ArgumentNullException(nameof(data));
+        return Base64.Decode(data);
+    }
 }

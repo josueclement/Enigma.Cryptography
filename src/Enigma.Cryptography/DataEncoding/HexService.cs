@@ -1,3 +1,4 @@
+using System;
 using Org.BouncyCastle.Utilities.Encoders;
 
 namespace Enigma.Cryptography.DataEncoding;
@@ -9,9 +10,15 @@ public class HexService : IEncodingService
 {
     /// <inheritdoc />
     public string Encode(byte[] data)
-        => Hex.ToHexString(data);
+    {
+        if (data is null) throw new ArgumentNullException(nameof(data));
+        return Hex.ToHexString(data);
+    }
 
     /// <inheritdoc />
     public byte[] Decode(string data)
-        => Hex.Decode(data);
+    {
+        if (data is null) throw new ArgumentNullException(nameof(data));
+        return Hex.Decode(data);
+    }
 }

@@ -5,21 +5,9 @@ using System;
 namespace Enigma.Cryptography.PublicKey;
 
 /// <summary>
-/// Provides cryptographic operations for asymmetric (public-key) encryption, decryption, 
+/// Provides cryptographic operations for asymmetric (public-key) encryption, decryption,
 /// digital signatures, and key pair generation using the BouncyCastle library.
 /// </summary>
-/// <remarks>
-/// This service encapsulates common public-key cryptography operations including:
-/// <list type="bullet">
-///   <item><description>Key pair generation with configurable key sizes</description></item>
-///   <item><description>Data encryption using public keys</description></item>
-///   <item><description>Data decryption using private keys</description></item>
-///   <item><description>Digital signature creation using private keys</description></item>
-///   <item><description>Signature verification using public keys</description></item>
-/// </list>
-/// The implementation relies on factory methods to create the necessary cryptographic primitives,
-/// allowing for flexibility in the underlying algorithms used.
-/// </remarks>
 /// <param name="cipherFactory">Factory method that creates the asymmetric block cipher implementation</param>
 /// <param name="keyPairGeneratorFactory">Factory method that creates the key pair generator implementation</param>
 /// <param name="signerFactory">Factory method that creates the digital signature implementation</param>
@@ -39,6 +27,9 @@ public class PublicKeyService(
     /// <inheritdoc />
     public byte[] Encrypt(byte[] data, AsymmetricKeyParameter publicKey)
     {
+        if (data is null) throw new ArgumentNullException(nameof(data));
+        if (publicKey is null) throw new ArgumentNullException(nameof(publicKey));
+
         var cipher = cipherFactory();
         cipher.Init(forEncryption: true, publicKey);
         return cipher.ProcessBlock(data, 0, data.Length);
@@ -47,14 +38,20 @@ public class PublicKeyService(
     /// <inheritdoc />
     public byte[] Decrypt(byte[] data, AsymmetricKeyParameter privateKey)
     {
+        if (data is null) throw new ArgumentNullException(nameof(data));
+        if (privateKey is null) throw new ArgumentNullException(nameof(privateKey));
+
         var cipher = cipherFactory();
         cipher.Init(forEncryption: false, privateKey);
-        return cipher.ProcessBlock(data, 0, data.Length); 
+        return cipher.ProcessBlock(data, 0, data.Length);
     }
 
     /// <inheritdoc />
     public byte[] Sign(byte[] data, AsymmetricKeyParameter privateKey)
     {
+        if (data is null) throw new ArgumentNullException(nameof(data));
+        if (privateKey is null) throw new ArgumentNullException(nameof(privateKey));
+
         var signer = signerFactory();
         signer.Init(forSigning: true, privateKey);
         signer.BlockUpdate(data, 0, data.Length);
@@ -64,6 +61,10 @@ public class PublicKeyService(
     /// <inheritdoc />
     public bool Verify(byte[] data, byte[] signature, AsymmetricKeyParameter publicKey)
     {
+        if (data is null) throw new ArgumentNullException(nameof(data));
+        if (signature is null) throw new ArgumentNullException(nameof(signature));
+        if (publicKey is null) throw new ArgumentNullException(nameof(publicKey));
+
         var signer = signerFactory();
         signer.Init(forSigning: false, publicKey);
         signer.BlockUpdate(data, 0, data.Length);

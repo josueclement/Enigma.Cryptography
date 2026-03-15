@@ -1,4 +1,3 @@
-﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -21,8 +20,16 @@ public static class StreamExtensionsInt64
         /// <param name="value">Value</param>
         public void WriteLong(long value)
         {
-            var data = BitConverter.GetBytes(value);
-            stream.Write(data, 0, data.Length);
+            var data = new byte[8];
+            data[0] = (byte)value;
+            data[1] = (byte)(value >> 8);
+            data[2] = (byte)(value >> 16);
+            data[3] = (byte)(value >> 24);
+            data[4] = (byte)(value >> 32);
+            data[5] = (byte)(value >> 40);
+            data[6] = (byte)(value >> 48);
+            data[7] = (byte)(value >> 56);
+            stream.Write(data, 0, 8);
         }
 
         /// <summary>
@@ -31,8 +38,16 @@ public static class StreamExtensionsInt64
         /// <param name="value">Value</param>
         public async Task WriteLongAsync(long value)
         {
-            var data = BitConverter.GetBytes(value);
-            await stream.WriteAsync(data, 0, data.Length).ConfigureAwait(false);
+            var data = new byte[8];
+            data[0] = (byte)value;
+            data[1] = (byte)(value >> 8);
+            data[2] = (byte)(value >> 16);
+            data[3] = (byte)(value >> 24);
+            data[4] = (byte)(value >> 32);
+            data[5] = (byte)(value >> 40);
+            data[6] = (byte)(value >> 48);
+            data[7] = (byte)(value >> 56);
+            await stream.WriteAsync(data, 0, 8).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -42,10 +57,16 @@ public static class StreamExtensionsInt64
         /// <exception cref="IOException"></exception>
         public long ReadLong()
         {
-            var buffer = new byte[sizeof(long)];
-            if (stream.Read(buffer, 0, sizeof(long)) != sizeof(long))
-                throw new IOException("Incorrect number of bytes read");
-            return BitConverter.ToInt64(buffer, 0);
+            var buffer = new byte[8];
+            StreamReadHelpers.ReadExact(stream, buffer, 0, 8);
+            return (long)buffer[0]
+                 | ((long)buffer[1] << 8)
+                 | ((long)buffer[2] << 16)
+                 | ((long)buffer[3] << 24)
+                 | ((long)buffer[4] << 32)
+                 | ((long)buffer[5] << 40)
+                 | ((long)buffer[6] << 48)
+                 | ((long)buffer[7] << 56);
         }
 
         /// <summary>
@@ -55,10 +76,16 @@ public static class StreamExtensionsInt64
         /// <exception cref="IOException"></exception>
         public async Task<long> ReadLongAsync()
         {
-            var buffer = new byte[sizeof(long)];
-            if (await stream.ReadAsync(buffer, 0, sizeof(long)).ConfigureAwait(false) != sizeof(long))
-                throw new IOException("Incorrect number of bytes read");
-            return BitConverter.ToInt64(buffer, 0);
+            var buffer = new byte[8];
+            await StreamReadHelpers.ReadExactAsync(stream, buffer, 0, 8).ConfigureAwait(false);
+            return (long)buffer[0]
+                 | ((long)buffer[1] << 8)
+                 | ((long)buffer[2] << 16)
+                 | ((long)buffer[3] << 24)
+                 | ((long)buffer[4] << 32)
+                 | ((long)buffer[5] << 40)
+                 | ((long)buffer[6] << 48)
+                 | ((long)buffer[7] << 56);
         }
 
         /// <summary>
@@ -67,8 +94,16 @@ public static class StreamExtensionsInt64
         /// <param name="value">Value</param>
         public void WriteULong(ulong value)
         {
-            var data = BitConverter.GetBytes(value);
-            stream.Write(data, 0, data.Length);
+            var data = new byte[8];
+            data[0] = (byte)value;
+            data[1] = (byte)(value >> 8);
+            data[2] = (byte)(value >> 16);
+            data[3] = (byte)(value >> 24);
+            data[4] = (byte)(value >> 32);
+            data[5] = (byte)(value >> 40);
+            data[6] = (byte)(value >> 48);
+            data[7] = (byte)(value >> 56);
+            stream.Write(data, 0, 8);
         }
 
         /// <summary>
@@ -77,8 +112,16 @@ public static class StreamExtensionsInt64
         /// <param name="value">Value</param>
         public async Task WriteULongAsync(ulong value)
         {
-            var data = BitConverter.GetBytes(value);
-            await stream.WriteAsync(data, 0, data.Length).ConfigureAwait(false);
+            var data = new byte[8];
+            data[0] = (byte)value;
+            data[1] = (byte)(value >> 8);
+            data[2] = (byte)(value >> 16);
+            data[3] = (byte)(value >> 24);
+            data[4] = (byte)(value >> 32);
+            data[5] = (byte)(value >> 40);
+            data[6] = (byte)(value >> 48);
+            data[7] = (byte)(value >> 56);
+            await stream.WriteAsync(data, 0, 8).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -88,10 +131,16 @@ public static class StreamExtensionsInt64
         /// <exception cref="IOException"></exception>
         public ulong ReadULong()
         {
-            var buffer = new byte[sizeof(ulong)];
-            if (stream.Read(buffer, 0, sizeof(ulong)) != sizeof(ulong))
-                throw new IOException("Incorrect number of bytes read");
-            return BitConverter.ToUInt64(buffer, 0);
+            var buffer = new byte[8];
+            StreamReadHelpers.ReadExact(stream, buffer, 0, 8);
+            return (ulong)buffer[0]
+                 | ((ulong)buffer[1] << 8)
+                 | ((ulong)buffer[2] << 16)
+                 | ((ulong)buffer[3] << 24)
+                 | ((ulong)buffer[4] << 32)
+                 | ((ulong)buffer[5] << 40)
+                 | ((ulong)buffer[6] << 48)
+                 | ((ulong)buffer[7] << 56);
         }
 
         /// <summary>
@@ -101,10 +150,16 @@ public static class StreamExtensionsInt64
         /// <exception cref="IOException"></exception>
         public async Task<ulong> ReadULongAsync()
         {
-            var buffer = new byte[sizeof(ulong)];
-            if (await stream.ReadAsync(buffer, 0, sizeof(ulong)).ConfigureAwait(false) != sizeof(ulong))
-                throw new IOException("Incorrect number of bytes read");
-            return BitConverter.ToUInt64(buffer, 0);
+            var buffer = new byte[8];
+            await StreamReadHelpers.ReadExactAsync(stream, buffer, 0, 8).ConfigureAwait(false);
+            return (ulong)buffer[0]
+                 | ((ulong)buffer[1] << 8)
+                 | ((ulong)buffer[2] << 16)
+                 | ((ulong)buffer[3] << 24)
+                 | ((ulong)buffer[4] << 32)
+                 | ((ulong)buffer[5] << 40)
+                 | ((ulong)buffer[6] << 48)
+                 | ((ulong)buffer[7] << 56);
         }
     }
 }

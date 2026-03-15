@@ -1,4 +1,4 @@
-﻿using Org.BouncyCastle.Crypto.Generators;
+using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto.Signers;
 using Org.BouncyCastle.Crypto;
@@ -16,9 +16,11 @@ namespace Enigma.Cryptography.PQC;
 /// ML-DSA is designed to be secure against quantum computer attacks, unlike traditional public-key algorithms.
 /// </remarks>
 /// <param name="parametersFactory">Factory function that provides algorithm-specific parameters for the ML-DSA operations</param>
+/// <param name="deterministic">Whether to use deterministic signing. Default is false.</param>
 // ReSharper disable once InconsistentNaming
 public class MLDsaService(
-    Func<MLDsaParameters> parametersFactory) : IMLDsaService
+    Func<MLDsaParameters> parametersFactory,
+    bool deterministic = false) : IMLDsaService
 {
     /// <inheritdoc />
     public AsymmetricCipherKeyPair GenerateKeyPair()
@@ -31,7 +33,10 @@ public class MLDsaService(
     /// <inheritdoc />
     public byte[] Sign(byte[] data, AsymmetricKeyParameter privateKey)
     {
-        var signer = new MLDsaSigner(parametersFactory(), deterministic: false);
+        if (data is null) throw new ArgumentNullException(nameof(data));
+        if (privateKey is null) throw new ArgumentNullException(nameof(privateKey));
+
+        var signer = new MLDsaSigner(parametersFactory(), deterministic);
         signer.Init(forSigning: true, privateKey);
         signer.BlockUpdate(data, 0, data.Length);
         return signer.GenerateSignature();
@@ -40,7 +45,11 @@ public class MLDsaService(
     /// <inheritdoc />
     public bool Verify(byte[] data, byte[] signature, AsymmetricKeyParameter publicKey)
     {
-        var signer = new MLDsaSigner(parametersFactory(), deterministic: false);
+        if (data is null) throw new ArgumentNullException(nameof(data));
+        if (signature is null) throw new ArgumentNullException(nameof(signature));
+        if (publicKey is null) throw new ArgumentNullException(nameof(publicKey));
+
+        var signer = new MLDsaSigner(parametersFactory(), deterministic);
         signer.Init(forSigning: false, publicKey);
         signer.BlockUpdate(data, 0, data.Length);
         return signer.VerifySignature(signature);

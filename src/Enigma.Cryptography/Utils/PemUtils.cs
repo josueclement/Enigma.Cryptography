@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 using Enigma.Cryptography.PublicKey;
@@ -20,7 +20,10 @@ public static class PemUtils
     /// <param name="output">Output stream</param>
     public static void SaveKey(AsymmetricKeyParameter key, Stream output)
     {
-        using var writer = new StreamWriter(output, Encoding.UTF8);
+        if (key is null) throw new ArgumentNullException(nameof(key));
+        if (output is null) throw new ArgumentNullException(nameof(output));
+
+        using var writer = new StreamWriter(output, Encoding.UTF8, bufferSize: 1024, leaveOpen: true);
         var pemWriter = new PemWriter(writer);
         pemWriter.WriteObject(key);
     }
@@ -35,9 +38,21 @@ public static class PemUtils
     public static void SavePrivateKey(AsymmetricKeyParameter privateKey, Stream output,
         string password, string algorithm = "AES-256-CBC")
     {
-        using var writer = new StreamWriter(output, Encoding.UTF8);
-        var pemWriter = new PemWriter(writer);
-        pemWriter.WriteObject(privateKey, algorithm, password.ToCharArray(), new SecureRandom());
+        if (privateKey is null) throw new ArgumentNullException(nameof(privateKey));
+        if (output is null) throw new ArgumentNullException(nameof(output));
+        if (password is null) throw new ArgumentNullException(nameof(password));
+
+        var passwordChars = password.ToCharArray();
+        try
+        {
+            using var writer = new StreamWriter(output, Encoding.UTF8, bufferSize: 1024, leaveOpen: true);
+            var pemWriter = new PemWriter(writer);
+            pemWriter.WriteObject(privateKey, algorithm, passwordChars, new SecureRandom());
+        }
+        finally
+        {
+            Array.Clear(passwordChars, 0, passwordChars.Length);
+        }
     }
 
     /// <summary>
@@ -47,7 +62,9 @@ public static class PemUtils
     /// <returns>Key</returns>
     public static AsymmetricKeyParameter LoadKey(Stream input)
     {
-        using var reader = new StreamReader(input, Encoding.UTF8);
+        if (input is null) throw new ArgumentNullException(nameof(input));
+
+        using var reader = new StreamReader(input, Encoding.UTF8, detectEncodingFromByteOrderMarks: true, bufferSize: 1024, leaveOpen: true);
         var pemReader = new PemReader(reader);
         var obj = pemReader.ReadObject();
 
@@ -66,8 +83,12 @@ public static class PemUtils
     /// <returns>Key</returns>
     public static AsymmetricKeyParameter LoadPrivateKey(Stream input, string password)
     {
-        using var reader = new StreamReader(input, Encoding.UTF8);
-        var pemReader = new PemReader(reader, new PemPasswordFinder(password));
+        if (input is null) throw new ArgumentNullException(nameof(input));
+        if (password is null) throw new ArgumentNullException(nameof(password));
+
+        using var reader = new StreamReader(input, Encoding.UTF8, detectEncodingFromByteOrderMarks: true, bufferSize: 1024, leaveOpen: true);
+        using var passwordFinder = new PemPasswordFinder(password);
+        var pemReader = new PemReader(reader, passwordFinder);
         var obj = pemReader.ReadObject();
 
         return obj switch
@@ -76,5 +97,5 @@ public static class PemUtils
             AsymmetricKeyParameter { IsPrivate: true } key => key,
             _ => throw new InvalidOperationException("No private key found in Pem")
         };
-    } 
+    }
 }

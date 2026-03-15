@@ -33,6 +33,8 @@ public class MLKemService(
     /// <inheritdoc />
     public (byte[] encapsulation, byte[] secret) Encapsulate(AsymmetricKeyParameter publicKey)
     {
+        if (publicKey is null) throw new ArgumentNullException(nameof(publicKey));
+
         var encapsulator = new MLKemEncapsulator(parametersFactory());
         encapsulator.Init(publicKey);
         var encapsulation = new byte[encapsulator.EncapsulationLength];
@@ -44,6 +46,9 @@ public class MLKemService(
     /// <inheritdoc />
     public byte[] Decapsulate(byte[] encapsulation, AsymmetricKeyParameter privateKey)
     {
+        if (encapsulation is null) throw new ArgumentNullException(nameof(encapsulation));
+        if (privateKey is null) throw new ArgumentNullException(nameof(privateKey));
+
         var decapsulator = new MLKemDecapsulator(parametersFactory());
         decapsulator.Init(privateKey);
         var secret = new byte[decapsulator.SecretLength];

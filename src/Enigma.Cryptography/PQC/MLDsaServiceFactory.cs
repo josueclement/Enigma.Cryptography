@@ -1,4 +1,4 @@
-﻿using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Crypto.Parameters;
 
 namespace Enigma.Cryptography.PQC;
 
@@ -15,14 +15,14 @@ namespace Enigma.Cryptography.PQC;
 public class MLDsaServiceFactory : IMLDsaServiceFactory
 {
     /// <inheritdoc />
-    public IMLDsaService CreateDsa44Service()
-        => new MLDsaService(() => MLDsaParameters.ml_dsa_44);
-    
+    public IMLDsaService CreateDsa44Service(bool deterministic = false)
+        => new MLDsaService(() => MLDsaParameters.ml_dsa_44, deterministic);
+
     /// <inheritdoc />
-    public IMLDsaService CreateDsa65Service()
-        => new MLDsaService(() => MLDsaParameters.ml_dsa_65);
-    
+    public IMLDsaService CreateDsa65Service(bool deterministic = false)
+        => new MLDsaService(() => MLDsaParameters.ml_dsa_65, deterministic);
+
     /// <inheritdoc />
-    public IMLDsaService CreateDsa87Service()
-        => new MLDsaService(() => MLDsaParameters.ml_dsa_87);
+    public IMLDsaService CreateDsa87Service(bool deterministic = false)
+        => new MLDsaService(() => MLDsaParameters.ml_dsa_87, deterministic);
 }

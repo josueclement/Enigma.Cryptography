@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -22,9 +22,10 @@ public static class StreamExtensionsFloat
         public void WriteFloat(float value)
         {
             var data = BitConverter.GetBytes(value);
+            if (!BitConverter.IsLittleEndian) Array.Reverse(data);
             stream.Write(data, 0, data.Length);
         }
-    
+
         /// <summary>
         /// Asynchronously write float value
         /// </summary>
@@ -32,9 +33,10 @@ public static class StreamExtensionsFloat
         public async Task WriteFloatAsync(float value)
         {
             var data = BitConverter.GetBytes(value);
+            if (!BitConverter.IsLittleEndian) Array.Reverse(data);
             await stream.WriteAsync(data, 0, data.Length).ConfigureAwait(false);
         }
-    
+
         /// <summary>
         /// Read float value
         /// </summary>
@@ -43,11 +45,11 @@ public static class StreamExtensionsFloat
         public float ReadFloat()
         {
             var buffer = new byte[sizeof(float)];
-            if (stream.Read(buffer, 0, sizeof(float)) != sizeof(float))
-                throw new IOException("Incorrect number of bytes read");
+            StreamReadHelpers.ReadExact(stream, buffer, 0, sizeof(float));
+            if (!BitConverter.IsLittleEndian) Array.Reverse(buffer);
             return BitConverter.ToSingle(buffer, 0);
         }
-    
+
         /// <summary>
         /// Asynchronously read float value
         /// </summary>
@@ -56,8 +58,8 @@ public static class StreamExtensionsFloat
         public async Task<float> ReadFloatAsync()
         {
             var buffer = new byte[sizeof(float)];
-            if (await stream.ReadAsync(buffer, 0, sizeof(float)).ConfigureAwait(false) != sizeof(float))
-                throw new IOException("Incorrect number of bytes read");
+            await StreamReadHelpers.ReadExactAsync(stream, buffer, 0, sizeof(float)).ConfigureAwait(false);
+            if (!BitConverter.IsLittleEndian) Array.Reverse(buffer);
             return BitConverter.ToSingle(buffer, 0);
         }
     }

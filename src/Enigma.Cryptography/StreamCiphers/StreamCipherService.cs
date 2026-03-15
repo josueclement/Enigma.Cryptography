@@ -39,8 +39,13 @@ public class StreamCipherService : IStreamCipherService
         IProgress<int>? progress = null,
         CancellationToken cancellationToken = default)
     {
+        if (input is null) throw new ArgumentNullException(nameof(input));
+        if (output is null) throw new ArgumentNullException(nameof(output));
+        if (key is null) throw new ArgumentNullException(nameof(key));
+        if (nonce is null) throw new ArgumentNullException(nameof(nonce));
+
         cancellationToken.ThrowIfCancellationRequested();
-        
+
         // Create and initialize the cipher
         var cipher = _cipherFactory();
         var parameters = new ParametersWithIV(new KeyParameter(key), nonce);
@@ -87,8 +92,13 @@ public class StreamCipherService : IStreamCipherService
         IProgress<int>? progress = null,
         CancellationToken cancellationToken = default)
     {
+        if (input is null) throw new ArgumentNullException(nameof(input));
+        if (output is null) throw new ArgumentNullException(nameof(output));
+        if (key is null) throw new ArgumentNullException(nameof(key));
+        if (nonce is null) throw new ArgumentNullException(nameof(nonce));
+
         cancellationToken.ThrowIfCancellationRequested();
-        
+
         // Create and initialize the cipher
         var cipher = _cipherFactory();
         var parameters = new ParametersWithIV(new KeyParameter(key), nonce);

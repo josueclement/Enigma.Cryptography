@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -22,6 +22,7 @@ public static class StreamExtensionsBool
         public void WriteBool(bool value)
         {
             var data = BitConverter.GetBytes(value);
+            if (!BitConverter.IsLittleEndian) Array.Reverse(data);
             stream.Write(data, 0, data.Length);
         }
 
@@ -32,6 +33,7 @@ public static class StreamExtensionsBool
         public async Task WriteBoolAsync(bool value)
         {
             var data = BitConverter.GetBytes(value);
+            if (!BitConverter.IsLittleEndian) Array.Reverse(data);
             await stream.WriteAsync(data, 0, data.Length).ConfigureAwait(false);
         }
 
@@ -43,8 +45,8 @@ public static class StreamExtensionsBool
         public bool ReadBool()
         {
             var buffer = new byte[sizeof(bool)];
-            if (stream.Read(buffer, 0, sizeof(bool)) != sizeof(bool))
-                throw new IOException("Incorrect number of bytes read");
+            StreamReadHelpers.ReadExact(stream, buffer, 0, sizeof(bool));
+            if (!BitConverter.IsLittleEndian) Array.Reverse(buffer);
             return BitConverter.ToBoolean(buffer, 0);
         }
 
@@ -56,8 +58,8 @@ public static class StreamExtensionsBool
         public async Task<bool> ReadBoolAsync()
         {
             var buffer = new byte[sizeof(bool)];
-            if (await stream.ReadAsync(buffer, 0, sizeof(bool)).ConfigureAwait(false) != sizeof(bool))
-                throw new IOException("Incorrect number of bytes read");
+            await StreamReadHelpers.ReadExactAsync(stream, buffer, 0, sizeof(bool)).ConfigureAwait(false);
+            if (!BitConverter.IsLittleEndian) Array.Reverse(buffer);
             return BitConverter.ToBoolean(buffer, 0);
         }
     }
