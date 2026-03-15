@@ -48,7 +48,7 @@ For block ciphers there are additional internal factories:
 
 | Namespace | Description |
 |-----------|-------------|
-| `BlockCiphers` | AES, DES, 3DES, Blowfish — CBC, ECB, SIC/CTR, GCM modes |
+| `BlockCiphers` | AES, DES, 3DES, Blowfish, Twofish, Serpent, Camellia, CAST-128, IDEA, SEED, ARIA, SM4 — CBC, ECB, SIC/CTR, GCM modes |
 | `StreamCiphers` | ChaCha20 (including RFC 7539), Salsa20 |
 | `Hash` | MD5, SHA-1, SHA-256, SHA-512, SHA-3 |
 | `KDF` | PBKDF2, Argon2 |

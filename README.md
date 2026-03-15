@@ -16,6 +16,20 @@ A comprehensive .NET cryptography library built on top of [BouncyCastle.Cryptogr
 - **Padding** — PKCS7, ISO 7816-4, X9.23
 - **Data Encoding** — Base64 and hexadecimal encoding/decoding
 
+## Async, progress reporting & cancellation
+
+Stream-based modules (Block Ciphers, Stream Ciphers, Hashing) are fully async and accept optional `IProgress<int>` and `CancellationToken` parameters for progress reporting and cooperative cancellation:
+
+```csharp
+var cts = new CancellationTokenSource();
+var progress = new Progress<int>(bytesProcessed =>
+    Console.WriteLine($"Processed {bytesProcessed} bytes"));
+
+await service.EncryptAsync(input, output, parameters, progress, cts.Token);
+```
+
+Progress reports per-chunk byte deltas (not cumulative totals), making it straightforward to build progress bars for large-file processing.
+
 ## Installation
 
 ```shell
@@ -226,7 +240,7 @@ var privateKey = PemUtils.LoadPrivateKey(privateInput, "yourpassword");
 ### ML-DSA example
 
 ```csharp
-var service = new MLDsaServiceFactory().CreateDsa65Service();
+var service = new MLDsaServiceFactory().CreateDsa65Service(); // deterministic: false (default)
 
 var keyPair = service.GenerateKeyPair();
 
@@ -320,7 +334,9 @@ var hash = await service.HashAsync(input);
 ### Classes
 
 - `Pbkdf2Service` — PBKDF2 key derivation service
+- `Pbkdf2ServiceFactory` — `IPbkdf2Service` factory
 - `Argon2Service` — Argon2 password-based key derivation service
+- `Argon2ServiceFactory` — `IArgon2Service` factory
 
 ### PBKDF2 example
 
@@ -330,7 +346,7 @@ var service = new Pbkdf2Service();
 var salt = "5775ada0513d7d7d7316de8d72d1f4d2".FromHexString();
 
 // Derive a 32-byte key from a password and salt
-var key = service.GenerateKey(size: 32, password: "yourpassword", salt, iterations: 10_000);
+var key = service.GenerateKey(size: 32, password: "yourpassword", salt);
 ```
 
 ### Argon2 example
