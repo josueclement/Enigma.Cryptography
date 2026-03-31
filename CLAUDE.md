@@ -43,6 +43,7 @@ For block ciphers there are additional internal factories:
 - Async stream-based modules support `IProgress<int>` for progress reporting (reports per-chunk byte deltas, not cumulative totals) and `CancellationToken` for cancellation
 - KDF methods do not clear caller-provided input arrays; callers own input lifetime and are responsible for clearing sensitive data (e.g. password bytes) when no longer needed
 - Internal buffer pooling uses `ArrayPool<byte>.Shared` for memory efficiency
+- Stateless serialization operations (PEM/DER/PFX load/save, certificate inspection) live in static utility classes (`PemUtils`, `X509Utils`), while operations requiring configuration (generation, signing, validation) live in services
 - All crypto delegates to **BouncyCastle.Cryptography v2.6.2**; this library is purely an abstraction layer
 
 ### Modules
@@ -55,10 +56,11 @@ For block ciphers there are additional internal factories:
 | `KDF` | PBKDF2, Argon2 |
 | `PublicKey` | RSA encryption and signing |
 | `PQC` | ML-DSA (CRYSTALS-Dilithium), ML-KEM (CRYSTALS-Kyber) |
+| `X509` | Self-signed certificate generation, CSR (PKCS#10), certificate issuance, chain validation |
 | `Padding` | PKCS7, ISO 7816-4, X9.23 |
 | `DataEncoding` | Base64, Hex |
 | `Extensions` | `StreamExtensions` (read/write typed values), `EncodingExtensions` (UTF-8 helpers) |
-| `Utils` | `PemUtils` (load/save PEM keys), `RandomUtils` (secure random bytes) |
+| `Utils` | `PemUtils` (load/save PEM keys), `X509Utils` (load/save/inspect X.509 certificates — PEM, DER, PFX), `RandomUtils` (secure random bytes) |
 
 ### Tests
 
