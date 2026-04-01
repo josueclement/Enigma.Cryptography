@@ -11,6 +11,7 @@ A comprehensive .NET cryptography library built on top of [BouncyCastle.Cryptogr
 - **Stream Ciphers** — ChaCha20, ChaCha20-RFC7539, Salsa20
 - **Public-Key Cryptography** — RSA encryption, signing, and PEM key management
 - **Post-Quantum Cryptography** — ML-DSA (CRYSTALS-Dilithium) and ML-KEM (CRYSTALS-Kyber)
+- **X.509 Certificates** — Self-signed generation, CSR creation, certificate issuance, PEM/DER/PFX support, chain validation
 - **Hashing** — MD5, SHA-1, SHA-256, SHA-512, SHA-3
 - **Key Derivation** — PBKDF2 and Argon2
 - **Padding** — PKCS7, ISO 7816-4, X9.23
@@ -295,6 +296,91 @@ var publicKey = PemUtils.LoadKey(publicInput);
 // Load and decrypt private key from PEM
 using var privateInput = new MemoryStream(privateOutput.ToArray());
 var privateKey = PemUtils.LoadPrivateKey(privateInput, "yourpassword");
+```
+
+---
+
+## X.509 Certificates
+
+### Classes
+
+- `X509CertificateService` — Service for certificate generation, CSR creation, certificate issuance, and chain validation
+- `X509CertificateServiceFactory` — `IX509CertificateService` factory
+- `X509Utils` — Static utilities for loading, saving, and inspecting certificates (PEM, DER, PFX)
+- `CertificateInfo` — Read-only certificate information (subject, issuer, validity, extensions, etc.)
+
+### Self-signed certificate example
+
+```csharp
+var certService = new X509CertificateServiceFactory().CreateService();
+var rsaService = new PublicKeyServiceFactory().CreateRsaService();
+
+// Generate RSA key pair and self-signed certificate
+var keyPair = rsaService.GenerateKeyPair(2048);
+var cert = certService.GenerateSelfSignedCertificate(
+    keyPair,
+    new X509Name("CN=example.com,O=MyOrg"),
+    DateTime.UtcNow.AddDays(-1),
+    DateTime.UtcNow.AddYears(1),
+    keyUsage: KeyUsage.DigitalSignature | KeyUsage.KeyEncipherment,
+    basicConstraintsCa: false,
+    subjectAlternativeNames: new GeneralNames(new GeneralName(GeneralName.DnsName, "example.com")));
+
+// Save certificate to PEM
+using var pemOutput = new MemoryStream();
+X509Utils.SaveCertificateToPem(cert, pemOutput);
+
+// Load certificate from PEM
+using var pemInput = new MemoryStream(pemOutput.ToArray());
+var loaded = X509Utils.LoadCertificateFromPem(pemInput);
+
+// Save/load certificate in DER format
+var derBytes = X509Utils.SaveCertificate(cert);
+var fromDer = X509Utils.LoadCertificate(derBytes);
+
+// Export to PFX (certificate + private key)
+var pfxData = X509Utils.ExportToPfx("mycert", cert, keyPair.Private, "password");
+
+// Import from PFX
+var (pfxCert, pfxKey) = X509Utils.LoadFromPfx(pfxData, "password");
+
+// Inspect certificate
+var info = X509Utils.GetCertificateInfo(cert);
+Console.WriteLine($"Subject: {info.Subject}");
+Console.WriteLine($"Valid: {info.NotBefore} - {info.NotAfter}");
+Console.WriteLine($"Is CA: {info.IsCa}");
+```
+
+### CSR and certificate issuance example
+
+```csharp
+var certService = new X509CertificateServiceFactory().CreateService();
+var rsaService = new PublicKeyServiceFactory().CreateRsaService();
+
+// Create a CA
+var caKeyPair = rsaService.GenerateKeyPair(2048);
+var caCert = certService.GenerateSelfSignedCertificate(
+    caKeyPair,
+    new X509Name("CN=My CA"),
+    DateTime.UtcNow.AddDays(-1),
+    DateTime.UtcNow.AddYears(10),
+    keyUsage: KeyUsage.KeyCertSign | KeyUsage.CrlSign,
+    basicConstraintsCa: true);
+
+// Generate a CSR for a leaf certificate
+var leafKeyPair = rsaService.GenerateKeyPair(2048);
+var csr = certService.GenerateCsr(leafKeyPair, new X509Name("CN=leaf.example.com"));
+
+// Issue the certificate from the CSR
+var leafCert = certService.IssueCertificate(
+    csr, caKeyPair, new X509Name("CN=My CA"),
+    DateTime.UtcNow.AddDays(-1),
+    DateTime.UtcNow.AddYears(1),
+    keyUsage: KeyUsage.DigitalSignature | KeyUsage.KeyEncipherment,
+    basicConstraintsCa: false);
+
+// Validate the chain
+var isValid = certService.ValidateChain(leafCert, new[] { caCert });
 ```
 
 ---

@@ -12,6 +12,7 @@ using Enigma.Cryptography.PQC;
 using Enigma.Cryptography.PublicKey;
 using Enigma.Cryptography.StreamCiphers;
 using Enigma.Cryptography.Utils;
+using Enigma.Cryptography.X509;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Parameters;
 using Xunit;
@@ -245,6 +246,129 @@ public class ArgumentValidationTests
     [Fact]
     public void PemUtils_LoadPrivateKeyNullPassword_Throws()
         => Assert.Throws<ArgumentNullException>(() => PemUtils.LoadPrivateKey(new MemoryStream(), null!));
+
+    // X509CertificateService
+    [Fact]
+    public void X509_GenerateSelfSigned_NullKeyPair_Throws()
+    {
+        var service = new X509CertificateServiceFactory().CreateService();
+        Assert.Throws<ArgumentNullException>(() =>
+            service.GenerateSelfSignedCertificate(null!, new Org.BouncyCastle.Asn1.X509.X509Name("CN=Test"),
+                DateTime.UtcNow, DateTime.UtcNow.AddYears(1)));
+    }
+
+    [Fact]
+    public void X509_GenerateSelfSigned_NullSubject_Throws()
+    {
+        var service = new X509CertificateServiceFactory().CreateService();
+        var keyPair = new PublicKeyServiceFactory().CreateRsaService().GenerateKeyPair(2048);
+        Assert.Throws<ArgumentNullException>(() =>
+            service.GenerateSelfSignedCertificate(keyPair, null!,
+                DateTime.UtcNow, DateTime.UtcNow.AddYears(1)));
+    }
+
+    [Fact]
+    public void X509_GenerateCsr_NullKeyPair_Throws()
+    {
+        var service = new X509CertificateServiceFactory().CreateService();
+        Assert.Throws<ArgumentNullException>(() =>
+            service.GenerateCsr(null!, new Org.BouncyCastle.Asn1.X509.X509Name("CN=Test")));
+    }
+
+    [Fact]
+    public void X509_GenerateCsr_NullSubject_Throws()
+    {
+        var service = new X509CertificateServiceFactory().CreateService();
+        var keyPair = new PublicKeyServiceFactory().CreateRsaService().GenerateKeyPair(2048);
+        Assert.Throws<ArgumentNullException>(() =>
+            service.GenerateCsr(keyPair, null!));
+    }
+
+    [Fact]
+    public void X509_VerifyCsr_NullCsr_Throws()
+    {
+        var service = new X509CertificateServiceFactory().CreateService();
+        Assert.Throws<ArgumentNullException>(() => service.VerifyCsr(null!));
+    }
+
+    // X509Utils
+    [Fact]
+    public void X509Utils_LoadCertificate_NullData_Throws()
+        => Assert.Throws<ArgumentNullException>(() => X509Utils.LoadCertificate(null!));
+
+    [Fact]
+    public void X509Utils_LoadCertificateFromPem_NullInput_Throws()
+        => Assert.Throws<ArgumentNullException>(() => X509Utils.LoadCertificateFromPem(null!));
+
+    [Fact]
+    public void X509Utils_SaveCertificate_NullCert_Throws()
+        => Assert.Throws<ArgumentNullException>(() => X509Utils.SaveCertificate(null!));
+
+    [Fact]
+    public void X509Utils_SaveCertificateToPem_NullCert_Throws()
+        => Assert.Throws<ArgumentNullException>(() => X509Utils.SaveCertificateToPem(null!, new MemoryStream()));
+
+    [Fact]
+    public void X509Utils_SaveCertificateToPem_NullOutput_Throws()
+    {
+        var service = new X509CertificateServiceFactory().CreateService();
+        var keyPair = new PublicKeyServiceFactory().CreateRsaService().GenerateKeyPair(2048);
+        var cert = service.GenerateSelfSignedCertificate(keyPair,
+            new Org.BouncyCastle.Asn1.X509.X509Name("CN=Test"),
+            DateTime.UtcNow, DateTime.UtcNow.AddYears(1));
+        Assert.Throws<ArgumentNullException>(() => X509Utils.SaveCertificateToPem(cert, null!));
+    }
+
+    [Fact]
+    public void X509Utils_ExportToPfx_NullCert_Throws()
+    {
+        var keyPair = new PublicKeyServiceFactory().CreateRsaService().GenerateKeyPair(2048);
+        Assert.Throws<ArgumentNullException>(() =>
+            X509Utils.ExportToPfx("alias", null!, keyPair.Private, "pass"));
+    }
+
+    [Fact]
+    public void X509Utils_ExportToPfx_NullPassword_Throws()
+    {
+        var service = new X509CertificateServiceFactory().CreateService();
+        var keyPair = new PublicKeyServiceFactory().CreateRsaService().GenerateKeyPair(2048);
+        var cert = service.GenerateSelfSignedCertificate(keyPair,
+            new Org.BouncyCastle.Asn1.X509.X509Name("CN=Test"),
+            DateTime.UtcNow, DateTime.UtcNow.AddYears(1));
+        Assert.Throws<ArgumentNullException>(() =>
+            X509Utils.ExportToPfx("alias", cert, keyPair.Private, null!));
+    }
+
+    [Fact]
+    public void X509Utils_LoadFromPfx_NullData_Throws()
+        => Assert.Throws<ArgumentNullException>(() => X509Utils.LoadFromPfx(null!, "pass"));
+
+    [Fact]
+    public void X509Utils_LoadFromPfx_NullPassword_Throws()
+        => Assert.Throws<ArgumentNullException>(() => X509Utils.LoadFromPfx(new byte[] { 1 }, null!));
+
+    [Fact]
+    public void X509Utils_GetCertificateInfo_NullCert_Throws()
+        => Assert.Throws<ArgumentNullException>(() => X509Utils.GetCertificateInfo(null!));
+
+    [Fact]
+    public void X509_ValidateChain_NullCert_Throws()
+    {
+        var service = new X509CertificateServiceFactory().CreateService();
+        Assert.Throws<ArgumentNullException>(() =>
+            service.ValidateChain(null!, Array.Empty<Org.BouncyCastle.X509.X509Certificate>()));
+    }
+
+    [Fact]
+    public void X509_ValidateChain_NullTrustAnchors_Throws()
+    {
+        var service = new X509CertificateServiceFactory().CreateService();
+        var keyPair = new PublicKeyServiceFactory().CreateRsaService().GenerateKeyPair(2048);
+        var cert = service.GenerateSelfSignedCertificate(keyPair,
+            new Org.BouncyCastle.Asn1.X509.X509Name("CN=Test"),
+            DateTime.UtcNow, DateTime.UtcNow.AddYears(1));
+        Assert.Throws<ArgumentNullException>(() => service.ValidateChain(cert, null!));
+    }
 
     // S4 - ReadLengthValue max length
     [Fact]
